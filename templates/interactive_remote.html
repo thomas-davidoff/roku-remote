@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rokuctl</title>
+    <style>
+        .remote-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .row {
+            display: flex;
+            margin: 5px;
+        }
+
+        button {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            font-size: 16px;
+        }
+
+        .interactive-mode {
+            background-color: lightgreen;
+        }
+
+        #active-app {
+            font-size: 18px;
+            margin-top: 10px;
+            color: darkblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="remote-control">
+        <h1>Fuck the ios Roku app</h1>
+        <button id="toggleInteractiveMode" class="interactive-mode" onclick="toggleInteractiveMode()">Disable Interactive Mode</button>
+
+        <div class="row">
+            <button onclick="sendCommand('power_on')">Power On</button>
+            <button onclick="sendCommand('power_off')">Power Off</button>
+        </div>
+
+        <div class="row">
+            <button onclick="sendCommand('up')">Up</button>
+        </div>
+        <div class="row">
+            <button onclick="sendCommand('left')">Left</button>
+            <button onclick="sendCommand('select')">OK</button>
+            <button onclick="sendCommand('right')">Right</button>
+        </div>
+        <div class="row">
+            <button onclick="sendCommand('down')">Down</button>
+        </div>
+
+        <div class="row">
+            <button onclick="sendCommand('volume_up')">Vol +</button>
+            <button onclick="sendCommand('mute')">Mute</button>
+            <button onclick="sendCommand('volume_down')">Vol -</button>
+        </div>
+
+        <div class="row">
+            <button onclick="sendCommand('home')">Home</button>
+            <button onclick="sendCommand('play_pause')">Play/Pause</button>
+        </div>
+    </div>
+
+    <script>
+        let interactiveMode = true;
+
+        function toggleInteractiveMode() {
+            interactiveMode = !interactiveMode;
+            const button = document.getElementById('toggleInteractiveMode');
+            if (interactiveMode) {
+                button.textContent = 'Disable Interactive Mode';
+                button.classList.add('interactive-mode');
+            } else {
+                button.textContent = 'Enable Interactive Mode';
+                button.classList.remove('interactive-mode');
+            }
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (interactiveMode) {
+                switch (event.key) {
+                    case 'ArrowUp':
+                        sendCommand('up');
+                        break;
+                    case 'ArrowDown':
+                        sendCommand('down');
+                        break;
+                    case 'ArrowLeft':
+                        sendCommand('left');
+                        break;
+                    case 'ArrowRight':
+                        sendCommand('right');
+                        break;
+                    case 'Enter':
+                        sendCommand('select');
+                        break;
+                    case ' ':
+                        sendCommand('play_pause');
+                        break;
+                    case 'm':
+                        sendCommand('mute');
+                        break;
+                    case 'u':
+                        sendCommand('volume_up');
+                        break;
+                    case 'd':
+                        sendCommand('volume_down');
+                        break;
+                    case 'h':
+                        sendCommand('home');
+                        break;
+                    case 'b':
+                        sendCommand('back');
+                        break;
+                }
+            }
+        });
+
+        function sendCommand(command) {
+            const formData = new FormData();
+            formData.append('command', command);
+
+            fetch('/send_command', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log(`Command '${command}' sent successfully.`);
+                } else {
+                    console.error(`Failed to send command '${command}'.`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
