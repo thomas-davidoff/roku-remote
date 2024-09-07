@@ -1,0 +1,27 @@
+.remote-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    margin: 5px;
+}
+
+button {
+    width: 60px;
+    height: 60px;
+    margin: 5px;
+    font-size: 16px;
+}
+
+.interactive-mode {
+    background-color: lightgreen;
+}
+
+#active-app {
+    font-size: 18px;
+    margin-top: 10px;
+    color: darkblue;
+}
